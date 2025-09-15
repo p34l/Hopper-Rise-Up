@@ -54,7 +54,8 @@ class GameScene: SKScene {
 
     private func setupPlatforms() {
         for platform in gameViewModel.platforms {
-            let platformNode = SKSpriteNode(color: SKColor.brown, size: platform.size)
+            let platformNode = SKSpriteNode(imageNamed: "platform")
+            platformNode.size = platform.size
             platformNode.position = platform.position
             addChild(platformNode)
             platformNodes.append(platformNode)
@@ -63,7 +64,8 @@ class GameScene: SKScene {
 
     private func setupCoins() {
         for coin in gameViewModel.coins {
-            let coinNode = SKSpriteNode(color: SKColor.yellow, size: coin.size)
+            let coinNode = SKSpriteNode(imageNamed: "coin")
+            coinNode.size = CGSize(width: coin.size.width * 1.5, height: coin.size.height * 1.5)
             coinNode.position = coin.position
             addChild(coinNode)
             coinNodes.append(coinNode)
@@ -82,7 +84,7 @@ class GameScene: SKScene {
             showGameOverScene()
         }
 
-        if gameViewModel.score >= 50 {
+        if gameViewModel.score >= 200 {
             showVictoryScene()
         }
     }
@@ -101,7 +103,8 @@ class GameScene: SKScene {
                 if index < platformNodes.count {
                     platformNodes[index].position.y = platform.position.y
                 } else {
-                    let platformNode = SKSpriteNode(color: SKColor.brown, size: platform.size)
+                    let platformNode = SKSpriteNode(imageNamed: "platform")
+                    platformNode.size = platform.size
                     platformNode.position = platform.position
                     addChild(platformNode)
                     platformNodes.append(platformNode)
@@ -158,7 +161,8 @@ class GameScene: SKScene {
 
         while platformNodes.count < gameViewModel.platforms.count {
             let platform = gameViewModel.platforms[platformNodes.count]
-            let platformNode = SKSpriteNode(color: SKColor.brown, size: platform.size)
+            let platformNode = SKSpriteNode(imageNamed: "platform")
+            platformNode.size = platform.size
             platformNode.position = platform.position
             addChild(platformNode)
             platformNodes.append(platformNode)
@@ -166,16 +170,16 @@ class GameScene: SKScene {
     }
 
     private func updateCoins() {
-        for node in coinNodes {
-            node.removeFromParent()
-        }
-        coinNodes.removeAll()
-
-        for coin in gameViewModel.coins {
-            let coinNode = SKSpriteNode(color: SKColor.yellow, size: coin.size)
-            coinNode.position = coin.position
-            addChild(coinNode)
-            coinNodes.append(coinNode)
+        for (index, coin) in gameViewModel.coins.enumerated() {
+            if index < coinNodes.count {
+                coinNodes[index].position = coin.position
+            } else {
+                let coinNode = SKSpriteNode(imageNamed: "coin")
+                coinNode.size = CGSize(width: coin.size.width * 1.5, height: coin.size.height * 1.5)
+                coinNode.position = coin.position
+                addChild(coinNode)
+                coinNodes.append(coinNode)
+            }
         }
     }
 
