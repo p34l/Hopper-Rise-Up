@@ -14,6 +14,7 @@ class GameScene: SKScene {
     private var coinNodes: [SKSpriteNode] = []
     private var scoreLabel: SKLabelNode!
     private var lastUpdateTime: TimeInterval = 0
+    private var didMoveCameraUp = false
 
     init(size: CGSize, gameViewModel: GameViewModel) {
         self.gameViewModel = gameViewModel
@@ -80,6 +81,10 @@ class GameScene: SKScene {
         if gameViewModel.gameState == .gameOver {
             showGameOverScene()
         }
+
+        if gameViewModel.score >= 50 {
+            showVictoryScene()
+        }
     }
 
     private func updatePlayerPosition() {
@@ -88,6 +93,7 @@ class GameScene: SKScene {
 
         if playerNode.position.y > size.height / 2 {
             let deltaY = playerNode.position.y - size.height / 2
+            didMoveCameraUp = true
 
             for (index, platform) in gameViewModel.platforms.enumerated() {
                 platform.position.y -= deltaY
@@ -106,7 +112,7 @@ class GameScene: SKScene {
                 coin.position.y -= deltaY
 
                 if index < coinNodes.count {
-                    coinNodes[index].position = coin.position
+                    coinNodes[index].position.y = coin.position.y
                 } else {
                     let coinNode = SKSpriteNode(color: SKColor.yellow, size: coin.size)
                     coinNode.position = coin.position
@@ -117,6 +123,10 @@ class GameScene: SKScene {
 
             playerNode.position.y -= deltaY
             gameViewModel.player.position.y -= deltaY
+        }
+
+        if didMoveCameraUp && playerNode.position.y == 0 {
+            gameViewModel.gameState = .gameOver
         }
     }
 
@@ -156,14 +166,12 @@ class GameScene: SKScene {
     }
 
     private func updateCoins() {
-        for (index, coin) in gameViewModel.coins.enumerated() {
-            if coin.isCollected && index < coinNodes.count {
-                coinNodes[index].removeFromParent()
-            }
+        for node in coinNodes {
+            node.removeFromParent()
         }
+        coinNodes.removeAll()
 
-        while coinNodes.count < gameViewModel.coins.count {
-            let coin = gameViewModel.coins[coinNodes.count]
+        for coin in gameViewModel.coins {
             let coinNode = SKSpriteNode(color: SKColor.yellow, size: coin.size)
             coinNode.position = coin.position
             addChild(coinNode)
@@ -175,5 +183,11 @@ class GameScene: SKScene {
         let gameOverScene = GameOverScene(size: size, score: gameViewModel.score)
         let transition = SKTransition.fade(withDuration: 0.5)
         view?.presentScene(gameOverScene, transition: transition)
+    }
+
+    private func showVictoryScene() {
+        let victoryScene = VictoryScene(size: size, score: gameViewModel.score)
+        let transition = SKTransition.fade(withDuration: 0.5)
+        view?.presentScene(victoryScene, transition: transition)
     }
 }

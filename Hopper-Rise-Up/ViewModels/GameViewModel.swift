@@ -13,6 +13,7 @@ class GameViewModel: ObservableObject {
     @Published var score: Int = 0
     @Published var platforms: [Platform] = []
     @Published var coins: [Coin] = []
+    var hasCameraMovedUp: Bool = false
 
     var player: Player
     private var lastUpdateTime: TimeInterval = 0
@@ -88,10 +89,11 @@ class GameViewModel: ObservableObject {
     }
 
     private func checkCoinCollection() {
-        for coin in coins {
+        for (index, coin) in coins.enumerated().reversed() {
             if !coin.isCollected && coin.isPlayerCollecting(player: player) {
                 coin.collect()
                 score += coin.value
+                coins.remove(at: index)
             }
         }
     }
@@ -116,16 +118,18 @@ class GameViewModel: ObservableObject {
     }
 
     private func generateNewElements() {
-        if platforms.isEmpty || platforms.last!.position.y < screenHeight + 200 {
+        if platforms.isEmpty || (platforms.last!.position.y < screenHeight + 200) {
             let x = CGFloat.random(in: 50 ... (screenWidth - 50))
-            let y = (platforms.last?.position.y ?? 0) + CGFloat.random(in: 80 ... 120)
+            let y = (platforms.last?.position.y ?? 0) + 100
             let platform = Platform(position: CGPoint(x: x, y: y))
             platforms.append(platform)
         }
 
-        if coins.count < 5 {
+        let currentCoinsCount = coins.count
+        while currentCoinsCount + 0 < 5 && coins.count < 5 {
             let x = CGFloat.random(in: 50 ... (screenWidth - 50))
-            let y = CGFloat.random(in: 200 ... (screenHeight + 100))
+            let baseY = platforms.last?.position.y ?? (player.position.y + screenHeight / 2)
+            let y = baseY + CGFloat.random(in: 40 ... 100)
             let coin = Coin(position: CGPoint(x: x, y: y))
             coins.append(coin)
         }
