@@ -180,12 +180,14 @@ class GameScene: SKScene {
     }
 
     private func showGameOverScene() {
+        gameViewModel.saveCollectedCoins()
         let gameOverScene = GameOverScene(size: size, score: gameViewModel.score)
         let transition = SKTransition.fade(withDuration: 0.5)
         view?.presentScene(gameOverScene, transition: transition)
     }
 
     private func showVictoryScene() {
+        gameViewModel.saveCollectedCoins()
         let victoryScene = VictoryScene(size: size, score: gameViewModel.score)
         let transition = SKTransition.fade(withDuration: 0.5)
         view?.presentScene(victoryScene, transition: transition)

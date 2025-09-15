@@ -135,6 +135,12 @@ class GameViewModel: ObservableObject {
         }
     }
 
+    func saveCollectedCoins() {
+        let currentCoins = UserDefaults.standard.integer(forKey: "totalCoins")
+        let newTotal = currentCoins + score
+        UserDefaults.standard.set(newTotal, forKey: "totalCoins")
+    }
+
     private func checkGameOver() {
         if player.position.y < -100 {
             gameState = .gameOver

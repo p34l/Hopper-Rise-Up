@@ -11,6 +11,7 @@ class MenuScene: SKScene {
     private var menuViewModel: MenuViewModel
     private var playButton: SKLabelNode!
     private var titleLabel: SKLabelNode!
+    private var coinsLabel: SKLabelNode!
 
     init(size: CGSize, menuViewModel: MenuViewModel) {
         self.menuViewModel = menuViewModel
@@ -24,6 +25,7 @@ class MenuScene: SKScene {
     override func didMove(to view: SKView) {
         setupBackground()
         setupTitle()
+        setupCoinsLabel()
         setupPlayButton()
     }
 
@@ -43,6 +45,16 @@ class MenuScene: SKScene {
         let scaleDown = SKAction.scale(to: 1.0, duration: 1.0)
         let pulse = SKAction.sequence([scaleUp, scaleDown])
         titleLabel.run(SKAction.repeatForever(pulse))
+    }
+
+    private func setupCoinsLabel() {
+        coinsLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
+        let totalCoins = UserDefaults.standard.integer(forKey: "totalCoins")
+        coinsLabel.text = "Coins: \(totalCoins)"
+        coinsLabel.fontSize = 30
+        coinsLabel.fontColor = .yellow
+        coinsLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.1)
+        addChild(coinsLabel)
     }
 
     private func setupPlayButton() {
