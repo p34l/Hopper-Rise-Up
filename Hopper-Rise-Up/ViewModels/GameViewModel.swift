@@ -14,7 +14,7 @@ class GameViewModel: ObservableObject {
     @Published var platforms: [Platform] = []
     @Published var coins: [Coin] = []
 
-    private var player: Player
+    var player: Player
     private var lastUpdateTime: TimeInterval = 0
     private let screenWidth: CGFloat
     private let screenHeight: CGFloat
@@ -46,20 +46,43 @@ class GameViewModel: ObservableObject {
     }
 
     func playerJump() {
-        player.jump()
+        player.bounce()
     }
 
     func getPlayerPosition() -> CGPoint {
         return player.position
     }
 
+    func movePlayerLeft() {
+        player.moveLeft()
+    }
+
+    func movePlayerRight() {
+        player.moveRight()
+    }
+
+    func stopPlayer() {
+        player.stopMoving()
+    }
+
     private func checkPlatformCollisions() {
         for platform in platforms {
-            if platform.isPlayerOnPlatform(player: player) {
-                player.position.y = platform.position.y + platform.size.height / 2 + player.size.height / 2
-                player.velocity.y = 0
-                player.isJumping = false
-                break
+            let playerBottomPrevious = player.position.y - player.size.height / 2 - player.velocity.y * (1.0 / 60.0)
+            let playerBottomCurrent = player.position.y - player.size.height / 2
+
+            let platformTop = platform.position.y + platform.size.height / 2
+
+            if playerBottomPrevious >= platformTop && playerBottomCurrent <= platformTop {
+                let playerLeft = player.position.x - player.size.width / 2
+                let playerRight = player.position.x + player.size.width / 2
+                let platformLeft = platform.position.x - platform.size.width / 2
+                let platformRight = platform.position.x + platform.size.width / 2
+
+                if playerRight >= platformLeft && playerLeft <= platformRight {
+                    player.position.y = platformTop + player.size.height / 2
+                    player.bounce()
+                    break
+                }
             }
         }
     }
@@ -74,16 +97,19 @@ class GameViewModel: ObservableObject {
     }
 
     private func generateInitialLevel() {
+        let jumpHeight: CGFloat = 100
+        let startY: CGFloat = 50
+
         for i in 0 ..< 5 {
             let x = CGFloat.random(in: 50 ... (screenWidth - 50))
-            let y = CGFloat(150 + i * 100)
+            let y = startY + CGFloat(i) * jumpHeight
             let platform = Platform(position: CGPoint(x: x, y: y))
             platforms.append(platform)
         }
 
         for i in 0 ..< 3 {
             let x = CGFloat.random(in: 50 ... (screenWidth - 50))
-            let y = CGFloat(200 + i * 150)
+            let y = startY + CGFloat(i) * jumpHeight + 50
             let coin = Coin(position: CGPoint(x: x, y: y))
             coins.append(coin)
         }

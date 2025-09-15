@@ -69,10 +69,6 @@ class GameScene: SKScene {
         }
     }
 
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        gameViewModel.playerJump()
-    }
-
     override func update(_ currentTime: TimeInterval) {
         gameViewModel.update(currentTime: currentTime)
 
@@ -87,7 +83,56 @@ class GameScene: SKScene {
     }
 
     private func updatePlayerPosition() {
-        playerNode.position = gameViewModel.getPlayerPosition()
+        let playerPos = gameViewModel.getPlayerPosition()
+        playerNode.position = playerPos
+
+        if playerNode.position.y > size.height / 2 {
+            let deltaY = playerNode.position.y - size.height / 2
+
+            for (index, platform) in gameViewModel.platforms.enumerated() {
+                platform.position.y -= deltaY
+
+                if index < platformNodes.count {
+                    platformNodes[index].position.y = platform.position.y
+                } else {
+                    let platformNode = SKSpriteNode(color: SKColor.brown, size: platform.size)
+                    platformNode.position = platform.position
+                    addChild(platformNode)
+                    platformNodes.append(platformNode)
+                }
+            }
+
+            for (index, coin) in gameViewModel.coins.enumerated() {
+                coin.position.y -= deltaY
+
+                if index < coinNodes.count {
+                    coinNodes[index].position = coin.position
+                } else {
+                    let coinNode = SKSpriteNode(color: SKColor.yellow, size: coin.size)
+                    coinNode.position = coin.position
+                    addChild(coinNode)
+                    coinNodes.append(coinNode)
+                }
+            }
+
+            playerNode.position.y -= deltaY
+            gameViewModel.player.position.y -= deltaY
+        }
+    }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+
+        if location.x < size.width / 2 {
+            gameViewModel.movePlayerLeft()
+        } else {
+            gameViewModel.movePlayerRight()
+        }
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        gameViewModel.stopPlayer()
     }
 
     private func updateScore() {
