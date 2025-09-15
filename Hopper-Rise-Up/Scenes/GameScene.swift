@@ -38,7 +38,8 @@ class GameScene: SKScene {
     }
 
     private func setupPlayer() {
-        playerNode = SKSpriteNode(color: SKColor.red, size: CGSize(width: 40, height: 40))
+        playerNode = SKSpriteNode(imageNamed: "hero")
+        playerNode.size = CGSize(width: 40, height: 40)
         playerNode.position = gameViewModel.getPlayerPosition()
         addChild(playerNode)
     }
