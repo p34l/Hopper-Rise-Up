@@ -27,6 +27,7 @@ class GameScene: SKScene {
 
     override func didMove(to view: SKView) {
         setupBackground()
+        SoundManager.shared.playBackgroundLoop(name: "game-music") 
         setupPlayer()
         setupScoreLabel()
         setupPlatforms()
@@ -39,7 +40,7 @@ class GameScene: SKScene {
 
     private func setupPlayer() {
         playerNode = SKSpriteNode(imageNamed: "hero")
-        playerNode.size = CGSize(width: 40, height: 40)
+        playerNode.size = CGSize(width: 125, height: 125)
         playerNode.position = gameViewModel.getPlayerPosition()
         addChild(playerNode)
     }
@@ -82,10 +83,14 @@ class GameScene: SKScene {
         updateCoins()
 
         if gameViewModel.gameState == .gameOver {
+            SoundManager.shared.stopBackground()
+            SoundManager.shared.playEffect(name: "game-over")
             showGameOverScene()
         }
 
         if gameViewModel.score >= 200 {
+            SoundManager.shared.stopBackground()
+            SoundManager.shared.playEffect(name: "win")
             showVictoryScene()
         }
     }
@@ -140,8 +145,10 @@ class GameScene: SKScene {
 
         if location.x < size.width / 2 {
             gameViewModel.movePlayerLeft()
+            playerNode.xScale = -abs(playerNode.xScale)
         } else {
             gameViewModel.movePlayerRight()
+            playerNode.xScale = abs(playerNode.xScale)
         }
     }
 

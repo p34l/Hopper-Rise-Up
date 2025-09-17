@@ -92,6 +92,7 @@ class GameViewModel: ObservableObject {
         for (index, coin) in coins.enumerated().reversed() {
             if !coin.isCollected && coin.isPlayerCollecting(player: player) {
                 coin.collect()
+                SoundManager.shared.playEffect(name: "coin-collect")
                 score += coin.value
                 coins.remove(at: index)
             }

@@ -44,6 +44,7 @@ class Player {
 
     func bounce() {
         velocity.y = 400
+        SoundManager.shared.playEffect(name: "jump")
     }
 
     func moveLeft() {
