@@ -29,16 +29,14 @@ During development, AI tools were used to speed up and improve the workflow:
 
 ## How to Run the Project
 
-There are several ways to build and run the project depending on your goal — local development, testing, or distribution.
-
 ### 1. Running via Xcode (recommended for development)
-1. Clone the repository:  
-   ```bash
-   git clone https://github.com/your-username/hopper-rise-up.git
-   cd hopper-rise-up
-2. Open the project in Xcode (.xcodeproj or .xcworkspace file).
-3. Select your target device (Simulator or connected iPhone).
-4. Press Run ▶️ or use Cmd + R.
+1. Clone the repository:
+   
+   https://github.com/p34l/Hopper-Rise-Up.git
+
+3. Open the project in Xcode (.xcodeproj or .xcworkspace file).
+4. Select your target device (Simulator or connected iPhone).
+5. Press Run ▶️ or use Cmd + R.
 
 
 Requirements:
